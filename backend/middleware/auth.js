@@ -9,7 +9,19 @@ exports.authRequired = async (req, res, next) => {
       return res.status(401).json({ error: 'Not authenticated' });
     }
     const token = auth.split(' ')[1];
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'secret');
+   try {
+  const decoded = jwt.verify(token, process.env.JWT_SECRET || 'secret');
+  const user = await User.findById(decoded.id);
+  if (!user) return res.status(401).json({ error: 'User not found' });
+  req.user = user;
+  next();
+} catch (err) {
+  if (err.name === "TokenExpiredError") {
+    return res.status(401).json({ error: "Session expired" });
+  }
+  return res.status(401).json({ error: "Invalid token" });
+}
+
 
     const user = await User.findById(decoded.id);
     if (!user) return res.status(401).json({ error: 'User not found' });

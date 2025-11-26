@@ -9,7 +9,7 @@ function createToken(user) {
   return jwt.sign(
     { id: user._id, isAdmin: user.isAdmin },
     process.env.JWT_SECRET || 'secret',
-    { expiresIn: '7d' } // token expiry
+    { expiresIn: '2h' } // token expiry
   );
 }
 
