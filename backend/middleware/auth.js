@@ -3,7 +3,6 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 
 exports.authRequired = async (req, res, next) => {
-  try {
     const auth = req.headers.authorization || '';
     if (!auth.startsWith('Bearer ')) {
       return res.status(401).json({ error: 'Not authenticated' });
@@ -21,17 +20,6 @@ exports.authRequired = async (req, res, next) => {
   }
   return res.status(401).json({ error: "Invalid token" });
 }
-
-
-    const user = await User.findById(decoded.id);
-    if (!user) return res.status(401).json({ error: 'User not found' });
-
-    req.user = user;
-    next();
-  } catch (err) {
-    console.error('authRequired error:', err.message || err);
-    return res.status(401).json({ error: 'Invalid or expired token' });
-  }
 };
 
 exports.adminRequired = (req, res, next) => {
